@@ -17,7 +17,6 @@ def chatbot():
     """
     return get_runnable()
 
-
 # Create the chatbot
 app = chatbot()
 
@@ -46,7 +45,8 @@ async def ask_llm(prompt: str):
     SYSTEM_PROMPT = """
 You are a helpful AI assistant.
 Use the available tools whenever they are helpful.
-Answer clearly and concisely.
+Answer clearly and concisely. 
+Answer only using the provided context. If the context doesn't explicitly state the answer, say you don't know.
 """
 
     result = await app.ainvoke(

@@ -1,0 +1,263 @@
+==================================================
+Meeting 1: Backend Architecture Review
+Date: July 1, 2026
+Participants:
+- Ahmed Khan (Engineering Manager)
+- David Wilson (Backend Lead)
+- Sarah Lee (Software Engineer)
+- Mark Taylor (DevOps Engineer)
+
+Agenda:
+- Review backend architecture
+- Discuss scalability improvements
+- Plan upcoming refactoring
+
+Discussion Summary:
+The team reviewed the current backend architecture and identified areas where services could be optimized. The current monolithic structure is becoming difficult to maintain as new features are added.
+
+The team discussed moving critical modules into independent services to improve scalability and deployment flexibility.
+
+Decisions:
+- Authentication service will be separated first.
+- PostgreSQL indexing improvements will be implemented.
+- API documentation will be updated using OpenAPI.
+
+Action Items:
+- David will prepare the migration plan.
+- Sarah will analyze database queries.
+- Mark will review deployment requirements.
+
+Follow-up:
+Architecture review scheduled after two weeks.
+
+
+==================================================
+Meeting 2: Android Application Performance Review
+Date: July 2, 2026
+Participants:
+- Michael Brown (Android Tech Lead)
+- Ahmed Ali (Android Developer)
+- Lisa Chen (QA Engineer)
+
+Agenda:
+- Review app performance metrics
+- Identify slow screens
+- Plan optimization tasks
+
+Discussion Summary:
+The Android team analyzed application performance reports. The main issues were slow startup time, unnecessary API calls, and inefficient image loading.
+
+The team discussed improving application responsiveness using better caching strategies and lifecycle-aware components.
+
+Decisions:
+- Migrate remaining screens to Jetpack Compose.
+- Improve image caching implementation.
+- Reduce unnecessary network requests.
+
+Action Items:
+- Michael will review Compose migration progress.
+- Ahmed will optimize API calls.
+- Lisa will validate performance improvements.
+
+Follow-up:
+Performance results will be reviewed in the next sprint.
+
+
+==================================================
+Meeting 3: API Integration Planning
+Date: July 3, 2026
+Participants:
+- James Miller (Backend Engineer)
+- Robert Smith (Mobile Developer)
+- Emily Carter (Product Manager)
+
+Agenda:
+- Review third-party API requirements
+- Discuss integration timeline
+
+Discussion Summary:
+The team discussed integrating payment and notification APIs into the application.
+
+The payment provider requires additional security validation before production release.
+
+Decisions:
+- API integration will happen in two phases.
+- Sandbox testing must complete before production deployment.
+- Additional monitoring will be added.
+
+Action Items:
+- James will create API documentation.
+- Robert will implement mobile integration.
+- Emily will coordinate with vendors.
+
+
+==================================================
+Meeting 4: Database Optimization Discussion
+Date: July 4, 2026
+
+Participants:
+- David Wilson
+- Mark Taylor
+- Sarah Lee
+
+Agenda:
+- Analyze database performance
+- Review slow queries
+
+Discussion Summary:
+The team reviewed database monitoring reports and identified slow queries affecting customer dashboards.
+
+Decisions:
+- Add indexes to frequently searched columns.
+- Archive old transactional data.
+- Enable database query monitoring.
+
+Action Items:
+- Sarah will optimize SQL queries.
+- Mark will configure monitoring alerts.
+
+
+==================================================
+Meeting 5: Mobile Release Readiness
+Date: July 5, 2026
+
+Participants:
+- Michael Brown
+- Lisa Chen
+- Ahmed Ali
+
+Agenda:
+- Review release checklist
+- Verify critical bugs
+
+Discussion Summary:
+The team reviewed the upcoming mobile application release. Most critical issues have been resolved.
+
+Decisions:
+- Release candidate will be submitted after final QA.
+- Crash monitoring will remain enabled after launch.
+
+Action Items:
+- QA team will complete regression testing.
+- Developers will fix remaining minor issues.
+
+
+==================================================
+Meeting 6: Cloud Infrastructure Review
+Date: July 6, 2026
+
+Participants:
+- Mark Taylor
+- Ahmed Khan
+- David Wilson
+
+Agenda:
+- Review cloud resources
+- Reduce infrastructure cost
+
+Discussion Summary:
+The team analyzed cloud usage and identified unused resources.
+
+Decisions:
+- Remove unused environments.
+- Enable automatic scaling.
+- Review monthly cloud expenses.
+
+Action Items:
+- Mark will optimize infrastructure settings.
+- Ahmed will approve resource changes.
+
+
+==================================================
+Meeting 7: Security Review Meeting
+Date: July 7, 2026
+
+Participants:
+- Security Engineer
+- Backend Lead
+- Engineering Manager
+
+Agenda:
+- Review security vulnerabilities
+- Improve authentication
+
+Discussion Summary:
+The team reviewed recent security scans and discussed improving password policies and API protection.
+
+Decisions:
+- Enable additional API rate limiting.
+- Improve authentication logging.
+
+Action Items:
+- Backend team will update security rules.
+- Security team will perform another audit.
+
+
+==================================================
+Meeting 8: Testing Strategy Discussion
+Date: July 8, 2026
+
+Participants:
+- QA Lead
+- Developers
+- Product Manager
+
+Agenda:
+- Improve testing coverage
+- Automate regression tests
+
+Discussion Summary:
+The team discussed increasing automated test coverage to reduce production issues.
+
+Decisions:
+- Add automated API testing.
+- Increase mobile UI test coverage.
+
+Action Items:
+- QA will create test scenarios.
+- Developers will add missing unit tests.
+
+
+==================================================
+Meeting 9: CI/CD Pipeline Improvement
+Date: July 9, 2026
+
+Participants:
+- DevOps Engineer
+- Engineering Manager
+
+Agenda:
+- Review deployment process
+- Reduce deployment time
+
+Discussion Summary:
+The team reviewed current deployment workflows and identified delays caused by manual approvals.
+
+Decisions:
+- Automate deployment validation.
+- Add build notifications.
+
+Action Items:
+- DevOps will update pipeline scripts.
+
+
+==================================================
+Meeting 10: Sprint Retrospective
+Date: July 10, 2026
+
+Participants:
+- Engineering Team
+
+Agenda:
+- Review sprint performance
+- Identify improvements
+
+Discussion Summary:
+The team discussed completed tasks, challenges, and opportunities for improvement.
+
+Decisions:
+- Improve documentation.
+- Increase code review quality.
+
+Action Items:
+- Team leads will monitor improvements in the next sprint.
