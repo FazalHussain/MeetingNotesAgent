@@ -1,4 +1,5 @@
 langgraph
+langsmith
 langchain>=1.0.0
 langchain-chroma>=1.0.0
 langchain-core>=1.0.0
