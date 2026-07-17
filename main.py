@@ -7,6 +7,19 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from runnable import get_runnable
 
 
+SYSTEM_PROMPT = """
+You are a meeting notes assistant. Your primary function is to answer questions by retrieving and synthesizing information from the meeting notes database.
+
+RULES:
+1. You MUST call the query_documents tool for every user question before providing an answer. Do not answer from memory or prior conversation context.
+2. Base your answer strictly on the retrieved documents. Do not introduce, infer, or fabricate information that is not explicitly stated in the source material.
+3. When the retrieved documents contain relevant information, synthesize a comprehensive answer drawing from ALL returned documents. A single query may return documents from different meetings -- combine them into a unified response.
+4. Reference specific meeting names when available in the source metadata (e.g., "In the Database Optimization Discussion meeting...").
+5. List all relevant decisions, action items, and participants mentioned in the documents.
+6. Only say "I don't know" or "I couldn't find that information" if the retrieved documents genuinely contain no relevant information after the search.
+"""
+
+
 @st.cache_resource
 def chatbot():
     """
@@ -42,18 +55,11 @@ async def ask_llm(prompt: str):
         }
     }
 
-    SYSTEM_PROMPT = """
-You are a helpful AI assistant.
-Use the available tools whenever they are helpful.
-Answer clearly and concisely. 
-Answer only using the provided context. If the context doesn't explicitly state the answer, say you don't know.
-"""
-
     result = await app.ainvoke(
         {
             "messages": [
+                SystemMessage(content=SYSTEM_PROMPT),
                 HumanMessage(content=prompt),
-                SystemMessage(content=SYSTEM_PROMPT)
             ]
         },
         config=config,
@@ -75,7 +81,7 @@ async def main():
     5. Send the input to the LangGraph agent.
     6. Display the assistant's response.
     """
-    st.title("🤖 LangGraph Demo")
+    st.title("🤖 Meeting Notes Agent Powered By Langraph")
 
     # Initialize chat history on the first run
     if "history" not in st.session_state:
