@@ -34,10 +34,9 @@ def query_documents(question):
         question (str): The user's question might be answerable from the documents.
 
     Returns:
-        list: A list of relevant document contents that match with the question using RAG.
+        list: A appended strings of relevant document contents that match with the question using RAG.
     """
     # Retrieve the top-5 most similar document chunks from Chroma
-    # similarity_docs = db.similarity_search(question, k=5)
     similarity_docs = db.max_marginal_relevance_search(question, k=3, fetch_k=10)
 
     # Format each result with its source filename and content for the LLM to read
