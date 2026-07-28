@@ -39,7 +39,7 @@ jobs:
           - Python best practices
 
           Provide concise review comments.
-          ")
+          "
 
           echo "review<<EOF" >> $GITHUB_OUTPUT
           echo "$REVIEW" >> $GITHUB_OUTPUT
