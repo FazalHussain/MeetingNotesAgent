@@ -28,33 +28,30 @@ jobs:
           ANTHROPIC_BASE_URL: ${{ secrets.ANTHROPIC_BASE_URL }}
           GH_TOKEN: ${{ github.token }}
         run: |
-          REVIEW=$(claude \
-            --from-pr ${{ github.event.pull_request.number }} \
-            --print "
-            Review this Python PR as a senior Python engineer.
+          PR_DIFF=$(gh pr diff ${{ github.event.pull_request.number }})
+          PROMPT="You are a senior Python engineer reviewing a PR.
 
-            Check:
-            - bugs
-            - architecture
-            - security vulnerabilities
-            - performance issues
-            - Python best practices
-            - async issues
-            - missing tests
+            Review the following diff and find bugs, architecture issues, security vulnerabilities, performance problems, Python best-practice violations, async issues, and missing tests.
 
             For each issue provide:
-            Severity:
-            File:
-            Problem:
-            Suggested fix:
+            - Severity:
+            - File:
+            - Problem:
+            - Suggested fix:
 
             If there are no issues, summarize the strengths.
-            " \
-            --dangerously-skip-permissions)
 
-          echo "review<<EOF" >> $GITHUB_OUTPUT
+            \`\`\`diff
+            ${PR_DIFF}
+            \`\`\`"
+
+          # Run Claude Code in print mode with the PR diff
+          REVIEW=$(claude --print --dangerously-skip-permissions "$PROMPT" 2>/dev/null || echo "Review failed or timed out.")
+
+          DELIMITER=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "review<<$DELIMITER" >> $GITHUB_OUTPUT
           echo "$REVIEW" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          echo "$DELIMITER" >> $GITHUB_OUTPUT
 
       - name: Post Review Comment
         uses: actions/github-script@v7
