@@ -26,25 +26,35 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           ANTHROPIC_BASE_URL: ${{ secrets.ANTHROPIC_BASE_URL }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          claude --from-pr ${{ github.event.pull_request.number }} \
-          --print "
-          Review this Python PR.
+          REVIEW=$(claude \
+            --from-pr ${{ github.event.pull_request.number }} \
+            --print "
+            Review this Python PR as a senior Python engineer.
 
-          Check:
-          - bugs
-          - architecture
-          - security
-          - performance
-          - Python best practices
+            Check:
+            - bugs
+            - architecture
+            - security vulnerabilities
+            - performance issues
+            - Python best practices
+            - async issues
+            - missing tests
 
-          Provide concise review comments.
-          "
+            For each issue provide:
+            Severity:
+            File:
+            Problem:
+            Suggested fix:
+
+            If there are no issues, summarize the strengths.
+            " \
+            --dangerously-skip-permissions)
 
           echo "review<<EOF" >> $GITHUB_OUTPUT
           echo "$REVIEW" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-
 
       - name: Post Review Comment
         uses: actions/github-script@v7
