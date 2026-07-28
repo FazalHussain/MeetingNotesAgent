@@ -27,8 +27,8 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           ANTHROPIC_BASE_URL: ${{ secrets.ANTHROPIC_BASE_URL }}
         run: |
-          REVIEW=$(claude \
-          --prompt "
+          claude --from-pr ${{ github.event.pull_request.number }} \
+          --print "
           Review this Python PR.
 
           Check:
@@ -37,7 +37,6 @@ jobs:
           - security
           - performance
           - Python best practices
-          - missing tests
 
           Provide concise review comments.
           ")
