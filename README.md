@@ -63,6 +63,7 @@ Participants included Sarah Chen (DBA), James Wilson (Backend Lead), ...
 1. **Ingestion** — `rag_document_loader.py` reads `.txt` files from `meeting_notes/`, splits them into 400-character chunks (80-char overlap), computes embeddings with `all-MiniLM-L6-v2`, and persists them to `./chroma_db/`.
 2. **Runtime** — `main.py` starts the Streamlit app; `tools.py` loads the existing ChromaDB instance and exposes `query_documents` and `get_current_time` as LangGraph tools.
 3. **Query** — User asks a question → LangGraph agent decides whether to call a tool → tool retrieves top-5 similar chunks from Chroma → LLM synthesizes a grounded answer citing specific meetings.
+4. **Guardrails** — Before the agent runs, `input_guardrails.py` checks the latest user message for banned keywords and can short-circuit to a safe refusal response without calling the model.
 
 ## Project Structure
 
@@ -70,6 +71,7 @@ Participants included Sarah Chen (DBA), James Wilson (Backend Lead), ...
 MeetingNotesAgent/
 ├── main.py                  # Streamlit entry point — chat UI, session state
 ├── runnable.py              # LangGraph StateGraph: agent ↔ tools loop
+├── input_guardrails.py      # Deterministic middleware that blocks banned keywords before the LLM runs
 ├── tools.py                 # @tool functions: query_documents, get_current_time
 ├── rag_document_loader.py   # One-shot script: ingest meeting notes → ChromaDB
 ├── rag_evaluation.ipynb     # Jupyter notebook for RAG evaluation
@@ -161,6 +163,12 @@ The agent is built on a LangGraph `StateGraph` with two nodes:
 - **`tools`** — Executes each tool call, wraps results as `ToolMessage`s, and routes back to `agent` for synthesis.
 
 The `should_continue` conditional edge decides whether to loop back to tools or end the turn. `InMemorySaver` provides checkpointing for multi-turn conversations within a session.
+
+### Input Guardrails
+
+The project also includes a deterministic guardrail layer in `input_guardrails.py`. It uses a `ContentFilterMiddleware` to inspect the latest human message before the agent runs. If a banned keyword is detected (for example, `hack`, `exploit`, or `bypass`), the middleware returns a short refusal message and stops the workflow early. This prevents blocked requests from reaching the LLM and avoids unnecessary model cost.
+
+You can customize the banned keywords in `runnable.py` by adjusting the `ContentFilterMiddleware` configuration.
 
 ### System Prompt
 

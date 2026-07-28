@@ -17,15 +17,22 @@ from langgraph.graph import StateGraph, END
 from langgraph.graph.message import AnyMessage, add_messages
 from langgraph.checkpoint.memory import InMemorySaver
 
-from langchain_core.messages import ToolMessage
+from langchain_core.messages import ToolMessage, AIMessage
 from langchain_core.runnables import RunnableConfig
 
 from langchain_openai import ChatOpenAI
 from pathlib import Path
 
+from input_guardrails import ContentFilterMiddleware
+
 
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / ".env")
+
+# Instantiate the guardrail
+guardrail = ContentFilterMiddleware(
+    banned_keywords=["hack", "exploit", "bypass"],  # customize as needed
+)
 
 try:
     from tools import available_functions
@@ -132,6 +139,18 @@ def should_continue(
     return END
 
 
+def guardrail_node(state: GraphState):
+    """Guardrail node: block banned keywords.
+
+    Deterministic keyword checks — zero LLM cost for blocked requests.
+    """
+    result = guardrail.before_agent(state, runtime=None)
+    if result is not None:
+        return {"messages": [AIMessage(content=result["messages"][0]["content"])]}
+
+    return {}
+
+
 def get_runnable():
     """
     Build and compile the LangGraph workflow.
@@ -141,17 +160,21 @@ def get_runnable():
     """
 
     workflow = StateGraph(GraphState)
-
+    workflow.add_node("guardrail", guardrail_node)
     workflow.add_node("agent", call_model)
     workflow.add_node("tools", tool_node)
 
-    workflow.set_entry_point("agent")
+    workflow.set_entry_point("guardrail")
 
+    workflow.add_conditional_edges(
+        "guardrail",
+        lambda s: END if s.get("messages") and
+            isinstance(s["messages"][-1], AIMessage) else "agent"
+    )
     workflow.add_conditional_edges(
         "agent",
         should_continue,
     )
-
     workflow.add_edge("tools", "agent")
 
     memory = InMemorySaver()
