@@ -2,6 +2,8 @@
 
 A conversational AI agent built with **LangGraph** and **RAG** (Retrieval-Augmented Generation) that answers questions about your meeting notes. It loads `.txt` meeting transcripts into a ChromaDB vector store, then lets users query them through a Streamlit chat interface powered by a tool-calling LLM agent.
 
+This repository also includes `meeting_notes_llama_index.ipynb`, a notebook demo that shows how to ingest meeting notes into a LlamaIndex vector store, create HuggingFace embeddings, and configure Langfuse/OpenInference instrumentation for tracing.
+
 ## Demo
 
 ```
@@ -74,6 +76,7 @@ MeetingNotesAgent/
 ├── input_guardrails.py      # Deterministic middleware that blocks banned keywords before the LLM runs
 ├── tools.py                 # @tool functions: query_documents, get_current_time
 ├── rag_document_loader.py   # One-shot script: ingest meeting notes → ChromaDB
+├── meeting_notes_llama_index.ipynb  # Notebook demo: LlamaIndex ingestion, embeddings, and tracing
 ├── rag_evaluation.ipynb     # Jupyter notebook for RAG evaluation
 ├── meeting_notes/           # Source .txt meeting transcripts
 │   ├── 1.txt
@@ -181,6 +184,31 @@ The agent uses a system prompt that enforces strict retrieval-grounded behavior:
 5. **List decisions, action items, and participants** when present.
 6. **Admit uncertainty** when documents don't contain the answer.
 
+### Langfuse Observability
+
+This project includes Langfuse tracing for the retrieval and embedding workflow. The screenshots below represent the Langfuse dashboard and trace details for a sample query.
+
+#### Trace overview
+
+![Langfuse trace overview](assets/langfuse-trace-overview.svg)
+
+The overview shows the top-level `RetrieverQueryEngine.query` observation and its nested execution tree, including the vector retrieval and embedding lifecycle.
+
+#### Token splitting trace preview
+
+![TokenTextSplitter trace preview](assets/langfuse-token-splitter-trace.svg)
+
+This trace preview demonstrates `TokenTextSplitter.split_text` and includes a reference file path plus a sample meeting note chunk from `meeting_notes/3.pdf`.
+
+#### What to look for
+
+- `RetrieverQueryEngine.query` execution latency and sub-operation breakdown
+- `VectorIndexRetriever` and `HuggingFaceEmbedding.get_embedding` spans, showing vector search and embedding latency
+- Chunking and tokenization spans such as `SentenceSplitter._parse_nodes` and `TokenTextSplitter.split_text`
+- Trace metadata like environment, service name, and operation duration
+
+These traces make it easy to verify that the pipeline is executing correctly and to inspect bottlenecks in the retrieval chain.
+
 ### Embeddings & Chunking
 
 - **Embedding model**: `sentence-transformers/all-MiniLM-L6-v2` (384-dimensional, ~80 MB, runs locally via PyTorch)
@@ -202,7 +230,7 @@ The `rag_evaluation.ipynb` notebook provides an interactive environment for eval
 |---|---|---|---|
 | `OMNIROUTER_API_KEY` | Yes | — | API key for your LLM provider |
 | `OMNIROUTER_BASE_URL` | Yes | — | Base URL for the OpenAI-compatible API |
-| `LLM_MODEL` | No | `gpt-4o-mini` | Model name to use |
+| `LLM_MODEL` | Yes | `gpt-4o-mini` | Model name to use |
 | `LANGSMITH_API_KEY` | No | — | Enable LangSmith tracing/evaluation |
 | `RAG_DIRECTORY` | No | `meeting_notes` | Directory containing `.txt` meeting notes |
 
